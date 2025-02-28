@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { toast } from "sonner"
 
 export function LoginForm({ className, ...props }: React.ComponentProps<"div">) {
     const [email, setEmail] = useState("")
@@ -37,6 +38,7 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
         document.cookie = `token=${data.token}; path=/; max-age=604800; Secure;`
 
         console.log("Login succesvol, redirecting...")
+        toast.success("Welkom terug! 🎉")
 
         // 🔹 Forceren dat Next.js de pagina herlaadt en middleware triggert
         router.push("/")

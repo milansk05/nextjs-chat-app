@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { LogOut, Camera, ArrowLeft, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"; // ✅ Gebruik Sonner voor notificaties
 
 export default function SettingsPage() {
     const [user, setUser] = useState<{ name: string; email: string; image?: string } | null>(null);
@@ -50,13 +51,20 @@ export default function SettingsPage() {
         if (res.ok) {
             const updatedUser = await res.json();
             setUser(updatedUser);
+            toast.success("Je naam is bijgewerkt! 🎉"); // ✅ Succesnotificatie
+        } else {
+            toast.error("Kon naam niet opslaan. ❌"); // ✅ Foutnotificatie
         }
 
         setLoading(false);
     };
 
     const uploadProfilePicture = async () => {
-        if (!selectedFile) return;
+        if (!selectedFile) {
+            toast.error("Geen bestand geselecteerd. ❌"); // ✅ Foutnotificatie
+            return;
+        }
+
         const formData = new FormData();
         formData.append("file", selectedFile);
 
@@ -69,6 +77,10 @@ export default function SettingsPage() {
         if (res.ok) {
             const data = await res.json();
             setUser((prev) => (prev ? { ...prev, image: data.image } : null));
+            toast.success("Je profielfoto is bijgewerkt! 🎉");
+        }
+        else {
+            toast.error("Kon profielfoto niet uploaden. ❌");
         }
     };
 

@@ -11,9 +11,9 @@ import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/co
 import { Menu, LogOut, Settings } from "lucide-react";
 
 const chats = [
-    { name: "Papa 🧑‍🦰", message: "Je reageerde met 👍 op: 'Klaar'", time: "maandag", avatar: "" },
-    { name: "Mama 👩‍🦰", message: "❤️ op: 'Vanochtend'", time: "dinsdag", avatar: "" },
-    { name: "Noorderpoort", message: "Jij: Dit doet gewoon soms dingen met je 😕", time: "13:43", avatar: "" },
+    { name: "Systeem 🤖", message: "Laatste bericht weergeeft hier", time: "maandag", avatar: "" },
+    { name: "Test Persoon 1", message: "Laatste bericht weergeeft hier", time: "dinsdag", avatar: "" },
+    { name: "Test Persoon 2", message: "Laatste bericht weergeeft hier", time: "13:43", avatar: "" },
 ];
 
 export function Sidebar({ isOpen, toggleSidebar, onSelectChat }: { isOpen: boolean; toggleSidebar: () => void; onSelectChat: (chat: any) => void }) {
