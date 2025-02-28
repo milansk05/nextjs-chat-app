@@ -5,9 +5,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Menu, LogOut } from "lucide-react";
+import { Menu, LogOut, Settings } from "lucide-react";
 
 const chats = [
     { name: "Papa 🧑‍🦰", message: "Je reageerde met 👍 op: 'Klaar'", time: "maandag", avatar: "" },
@@ -126,23 +127,45 @@ function SidebarFooter({ isOpen }: { isOpen: boolean }) {
     }, []);
 
     return (
-        <div className="p-4 border-t border-gray-800 flex items-center gap-3">
-            <Avatar className="h-10 w-10">
-                <AvatarImage src={user?.image || "/avatars/user.png"} alt="User" />
-                <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
-            </Avatar>
-            {isOpen && (
-                <div className="flex-1">
-                    <span className="text-sm font-medium">{user?.name || "Gebruiker"}</span>
-                    <p className="text-xs text-gray-400">{user?.email || "Onbekend"}</p>
-                </div>
-            )}
-            <Button variant="ghost" size="icon" onClick={() => {
-                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-                window.location.href = "/login";
-            }}>
-                <LogOut className="h-5 w-5 text-gray-400" />
-            </Button>
+        <div className="p-4 border-t border-gray-800 flex items-center gap-3 hover:bg-gray-800 transition">
+            <Popover>
+                <PopoverTrigger asChild>
+                    <button className="flex items-center gap-3 w-full text-left focus:outline-none">
+                        <Avatar className="h-10 w-10">
+                            <AvatarImage src={user?.image || "/avatars/user.png"} alt="User" />
+                            <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
+                        </Avatar>
+                        {isOpen && (
+                            <div className="flex-1">
+                                <span className="text-sm font-medium">{user?.name || "Gebruiker"}</span>
+                                <p className="text-xs text-gray-400">{user?.email || "Onbekend"}</p>
+                            </div>
+                        )}
+                    </button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-48 p-2 bg-gray-900 border border-gray-800 rounded-md shadow-lg">
+                    <Button
+                        variant="ghost"
+                        className="w-full flex items-center justify-start gap-2 text-white"
+                        onClick={() => window.location.href = "/settings"}
+                    >
+                        <Settings className="h-4 w-4" />
+                        Instellingen
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        className="w-full flex items-center justify-start gap-2 text-red-500"
+                        onClick={async () => {
+                            await fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+                            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC; Secure; HttpOnly; SameSite=Lax";
+                            window.location.href = "/login";
+                        }}
+                    >
+                        <LogOut className="h-4 w-4" />
+                        Uitloggen
+                    </Button>
+                </PopoverContent>
+            </Popover>
         </div>
     );
 }
