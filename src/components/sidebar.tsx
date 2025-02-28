@@ -1,23 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
-import { Menu, LogOut } from "lucide-react"
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Menu, LogOut } from "lucide-react";
 
 const chats = [
     { name: "Papa 🧑‍🦰", message: "Je reageerde met 👍 op: 'Klaar'", time: "maandag", avatar: "" },
-    { name: "Mama 👩‍🦰", message: "❤️ op: 'Vanochtend'", time: "dinsdag", avatar: ""},
+    { name: "Mama 👩‍🦰", message: "❤️ op: 'Vanochtend'", time: "dinsdag", avatar: "" },
     { name: "Noorderpoort", message: "Jij: Dit doet gewoon soms dingen met je 😕", time: "13:43", avatar: "" },
-]
+];
 
 export function Sidebar({ isOpen, toggleSidebar, onSelectChat }: { isOpen: boolean; toggleSidebar: () => void; onSelectChat: (chat: any) => void }) {
-    const [search, setSearch] = useState("")
-    const [isMobileOpen, setIsMobileOpen] = useState(false)
+    const [isMobileOpen, setIsMobileOpen] = useState(false);
 
     return (
         <>
@@ -33,8 +32,8 @@ export function Sidebar({ isOpen, toggleSidebar, onSelectChat }: { isOpen: boole
                         <SheetTitle className="sr-only">Chats</SheetTitle>
                     </SheetHeader>
                     <SidebarContent isOpen={true} onSelectChat={(chat) => {
-                        onSelectChat(chat)
-                        setIsMobileOpen(false) // Sluit sidebar op mobiel
+                        onSelectChat(chat);
+                        setIsMobileOpen(false); // Sluit sidebar op mobiel
                     }} />
                 </SheetContent>
             </Sheet>
@@ -45,8 +44,8 @@ export function Sidebar({ isOpen, toggleSidebar, onSelectChat }: { isOpen: boole
                 isOpen ? "w-100" : "w-16"
             )}>
                 <div className="flex items-center justify-between p-4 border-b border-gray-800">
-                {isOpen && <span className="text-lg font-bold">Chats</span>}
-                <Button variant="ghost" size="icon" onClick={toggleSidebar}>
+                    {isOpen && <span className="text-lg font-bold">Chats</span>}
+                    <Button variant="ghost" size="icon" onClick={toggleSidebar}>
                         <Menu className="h-6 w-6" />
                     </Button>
                 </div>
@@ -58,15 +57,15 @@ export function Sidebar({ isOpen, toggleSidebar, onSelectChat }: { isOpen: boole
                 <SidebarFooter isOpen={isOpen} />
             </aside>
         </>
-    )
+    );
 }
 
 function SidebarContent({ isOpen = true, onSelectChat }: { isOpen?: boolean; onSelectChat: (chat: any) => void }) {
-    const [search, setSearch] = useState("")
+    const [search, setSearch] = useState("");
 
     const filteredChats = chats.filter(chat =>
         chat.name.toLowerCase().includes(search.toLowerCase())
-    )
+    );
 
     return (
         <div className="flex flex-col flex-1">
@@ -108,26 +107,42 @@ function SidebarContent({ isOpen = true, onSelectChat }: { isOpen?: boolean; onS
                 ))}
             </ScrollArea>
         </div>
-    )
+    );
 }
 
 /* Profiel onderaan de sidebar */
 function SidebarFooter({ isOpen }: { isOpen: boolean }) {
+    const [user, setUser] = useState<{ name: string; email: string; image?: string } | null>(null);
+
+    useEffect(() => {
+        async function fetchUser() {
+            const res = await fetch("/api/auth/user", { credentials: "include" });
+            if (res.ok) {
+                const data = await res.json();
+                setUser(data);
+            }
+        }
+        fetchUser();
+    }, []);
+
     return (
         <div className="p-4 border-t border-gray-800 flex items-center gap-3">
             <Avatar className="h-10 w-10">
-                <AvatarImage src="/avatars/user.png" alt="User" />
-                <AvatarFallback>MS</AvatarFallback>
+                <AvatarImage src={user?.image || "/avatars/user.png"} alt="User" />
+                <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
             </Avatar>
             {isOpen && (
                 <div className="flex-1">
-                    <span className="text-sm font-medium">Milan S</span>
-                    <p className="text-xs text-gray-400">milans@example.com</p>
+                    <span className="text-sm font-medium">{user?.name || "Gebruiker"}</span>
+                    <p className="text-xs text-gray-400">{user?.email || "Onbekend"}</p>
                 </div>
             )}
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={() => {
+                document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+                window.location.href = "/login";
+            }}>
                 <LogOut className="h-5 w-5 text-gray-400" />
             </Button>
         </div>
-    )
+    );
 }
