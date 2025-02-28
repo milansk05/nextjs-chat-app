@@ -132,7 +132,7 @@ function SidebarFooter({ isOpen }: { isOpen: boolean }) {
                 <PopoverTrigger asChild>
                     <button className="flex items-center gap-3 w-full text-left focus:outline-none">
                         <Avatar className="h-10 w-10">
-                            <AvatarImage src={user?.image || "/avatars/user.png"} alt="User" />
+                            <AvatarImage src={user?.image} alt="User" />
                             <AvatarFallback>{user?.name?.charAt(0) || "?"}</AvatarFallback>
                         </Avatar>
                         {isOpen && (
