@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AuthWrapper from "@/components/auth-wrapper"; // ✅ Nieuwe component voor client-side auth check
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,10 +25,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <AuthWrapper>{children}</AuthWrapper> {/* ✅ Auth check gebeurt nu in een aparte Client Component */}
       </body>
     </html>
   );
